@@ -1,0 +1,17 @@
+{application, 'dropbox_api',
+ [{description, "Dropbox API Lib"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {applications,
+   [kernel,
+    stdlib,
+    restc,
+    oauth2c
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {contributors, []},
+  {licenses, []},
+  {links, []}
+ ]}.
