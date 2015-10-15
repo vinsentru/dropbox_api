@@ -16,13 +16,12 @@ upload(LFname,RFname,Client) when is_list(LFname) ->
 		{error, Reason}	-> {error,0,Reason}
 	end;	
 
-upload(LBin,RFname,Client) when is_binary(LBin) ->
+upload(Body,RFname,Client) when is_binary(LBin) ->
 	Uri = "https://content.dropboxapi.com/1/files_put/auto/",
-	Body = LBin,
 	Params =  [{"overwrite",true},{"autorename",true}],
 	Url = restc:construct_url(Uri,RFname,Params),
 	Headers = [{"Content-Length",size(LBin)}],
-	case oauth2c:request(put, json, list_to_binary(Url), [200], Headers, Body, Client) of
+	case oauth2c:request(put, binary, list_to_binary(Url), [200], Headers, Body, Client) of
 		{{ok,200,RHeaders,Replay},Client2} -> {ok,Replay};
 		{{error,409,_,_},_} -> {error,409,"The call failed because a conflict occurred."};
 		{{error,411,_,_},_} -> {error,411,"Missing Content-Length header."};
@@ -33,9 +32,9 @@ upload(LBin,RFname,Client) when is_binary(LBin) ->
 
 make_dir(Path,Client) when is_list(Path) ->
 	Uri = "https://api.dropboxapi.com/1/fileops/create_folder",
+	%% Pass parameters as request's body for POST
 	Params =  [{"root","auto"},{"path",Path}],
-	Url = restc:construct_url(Uri,Params),
-	case oauth2c:request(post, json, list_to_binary(Url), [200], Client) of
+	case oauth2c:request(post, percent, list_to_binary(Uri), [200],[],Params,Client) of
 		{{ok,200,RHeaders,Replay},Client2} -> {ok,Replay};
 		{{error,403,_,_},_} -> {error,403,"There is already a folder at the given destination."};
 		{{error,Err,_,Replay},_} -> {error,Err,Replay}
