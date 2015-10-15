@@ -6,7 +6,8 @@
    [kernel,
     stdlib,
     restc,
-    oauth2c
+    oauth2c,
+    jsx
    ]},
   {env,[]},
   {modules, []},
