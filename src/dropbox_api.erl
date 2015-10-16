@@ -16,11 +16,11 @@ upload(LFname,RFname,Client) when is_list(LFname) ->
 		{error, Reason}	-> {error,0,Reason}
 	end;	
 
-upload(Body,RFname,Client) when is_binary(LBin) ->
+upload(Body,RFname,Client) when is_binary(Body) ->
 	Uri = "https://content.dropboxapi.com/1/files_put/auto/",
 	Params =  [{"overwrite",true},{"autorename",true}],
 	Url = restc:construct_url(Uri,RFname,Params),
-	Headers = [{"Content-Length",size(LBin)}],
+	Headers = [{"Content-Length",integer_to_list(size(Body))}],
 	case oauth2c:request(put, binary, list_to_binary(Url), [200], Headers, Body, Client) of
 		{{ok,200,RHeaders,Replay},Client2} -> {ok,Replay};
 		{{error,409,_,_},_} -> {error,409,"The call failed because a conflict occurred."};
